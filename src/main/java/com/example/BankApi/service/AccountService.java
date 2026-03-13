@@ -47,15 +47,23 @@ public class AccountService {
         repository.deleteById(id);
     }
 
-    public void depositById(int id, double amount){
-        Account account = getAccountById(id);
-        Transaction transaction = new Transaction(TransactionType.DEPOSIT, amount, account, account.getCurrency());
+    public ResponseEntity<String> depositById(int id, double amount){
+        if(amount <= 0){
+            return new ResponseEntity<>("Amount can't be negative", HttpStatus.BAD_REQUEST);
+        }
+        else {
+            Account account = getAccountById(id);
+            Transaction transaction = new Transaction(TransactionType.DEPOSIT, amount, account, account.getCurrency());
 
-        Transaction accountTransaction = transactionRepo.save(transaction);
-        account.addTransaction(accountTransaction);
-        account.deposit(amount);
+            Transaction accountTransaction = transactionRepo.save(transaction);
+            account.addTransaction(accountTransaction);
+            account.deposit(amount);
 
-        updateAccount(account);
+            updateAccount(account);
+
+            return new ResponseEntity<>("Account deposited successfully", HttpStatus.OK);
+        }
+
     }
 
     public ResponseEntity<String> withdrawById(int id, double amount){
