@@ -21,6 +21,7 @@ public class CurrencyService {
     public CurrencyService(){}
 
     public double convert(double amount, Currency from, Currency to) throws IOException, InterruptedException {
+        if (amount <=0) throw new IllegalArgumentException("Amount must be greater than zero");
         if(from == to){
             return amount;
         }
@@ -46,29 +47,5 @@ public class CurrencyService {
         }
         return amount * (rateTo / rateFrom);
     }
-
-//    public double getEur() throws IOException, InterruptedException {
-//        ObjectMapper mapper = new ObjectMapper();
-//        JsonNode node = mapper.readTree(response.body());
-//
-//        double eur = node.get("rates").get("EUR").asDouble();
-//        return eur;
-//    }
-//
-//    public double getUSD() throws IOException, InterruptedException {
-//        ObjectMapper mapper = new ObjectMapper();
-//        JsonNode node = mapper.readTree(response.body());
-//
-//        double usd = node.get("rates").get("USD").asDouble();
-//        return usd;
-//    }
-//
-//    public double getPln() throws IOException, InterruptedException {
-//        ObjectMapper mapper = new ObjectMapper();
-//        JsonNode node = mapper.readTree(response.body());
-//
-//        double pln = node.get("rates").get("PLN").asDouble();
-//        return pln;
-//    }
 
 }

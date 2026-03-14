@@ -68,7 +68,8 @@ public class AccountService {
 
     public ResponseEntity<String> withdrawById(int id, double amount){
         Account account = getAccountById(id);
-        if(account.canWithdraw(amount)){
+        if(amount<=0) return new ResponseEntity<>("Amount can't be negative", HttpStatus.BAD_REQUEST);
+        else if(account.canWithdraw(amount)){
             account.setBalance(account.getBalance()-amount);
 
             Transaction transaction = new Transaction(TransactionType.WITHDRAW, amount, account, account.getCurrency());
@@ -91,6 +92,7 @@ public class AccountService {
                                                       int toAccountId,
                                                       double amount,
                                                       String description){
+        if(amount <= 0) return new ResponseEntity<>("Amount can't be negative", HttpStatus.BAD_REQUEST);
         Account fromAccount = getAccountById(fromAccountId);
         Account toAccount = getAccountById(toAccountId);
 

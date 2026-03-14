@@ -42,6 +42,7 @@ public abstract class Account {
     public abstract boolean canWithdraw(double amount);
 
     public void deposit(double amount){
+        if(amount <= 0) throw  new IllegalArgumentException("Amount must be greater than zero");
         setBalance(getBalance() + amount);
     }
 
