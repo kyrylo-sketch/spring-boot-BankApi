@@ -16,11 +16,6 @@ public class CustomerController {
     @Autowired
     private CustomerService service;
 
-    @RequestMapping("/greetCustomer")
-    public String greet(){
-        return "Welcome to customers!";
-    }
-
     @GetMapping("/customers")
     public List<Customer> getCustomers() {
         return service.getCustomers();

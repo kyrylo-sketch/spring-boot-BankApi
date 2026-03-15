@@ -16,10 +16,6 @@ public class TransactionController {
     @Autowired
     private TransactionService service;
 
-    @RequestMapping("/")
-    public String greet(){
-        return "Welcome to transactions";
-    }
 
     @GetMapping("/transactions")
     public List<Transaction> getTransactions() {

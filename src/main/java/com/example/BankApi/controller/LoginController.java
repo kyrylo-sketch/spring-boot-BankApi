@@ -26,11 +26,6 @@ public class LoginController {
     @Autowired
     JWTService  jwtService;
 
-    @RequestMapping("/greetLogin")
-    public String greet(){
-        return "Welcome to login!";
-    }
-
     @PostMapping("/auth/login")
     public CustomerService.Result login(@RequestBody Customer customer){
         //return CustomerService.login(username, password);

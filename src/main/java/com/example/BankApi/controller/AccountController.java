@@ -19,10 +19,6 @@ public class AccountController {
     @Autowired
     private AccountService service;
 
-    @RequestMapping("/greet")
-    public String greet(){
-        return "Welcome to accounts";
-    }
 
     @GetMapping("/accounts")
     public List<Account> getAccounts() {
