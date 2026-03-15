@@ -44,7 +44,8 @@ public class SecurityConfig {
                     return config;
                 }))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/auth/register","/api/auth/login", "/api/auth/refresh")
+                        .requestMatchers("/api/auth/register","/api/auth/login", "/api/auth/refresh",
+                                "/swagger-ui/**", "/v3/api-docs/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/customers","/api/accounts")
                         .hasAuthority("ADMIN")
