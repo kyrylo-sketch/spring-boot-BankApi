@@ -6,6 +6,9 @@ import com.example.BankApi.model.TransactionType;
 import com.example.BankApi.repository.AccountRepo;
 import com.example.BankApi.repository.CustomerRepo;
 import com.example.BankApi.repository.TransactionRepo;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @Service
 public class AccountService {
 
@@ -48,7 +52,9 @@ public class AccountService {
     }
 
     public ResponseEntity<String> depositById(int id, double amount){
+        log.info("Deposit request: accountId={}, amount={}", id, amount);
         if(amount <= 0){
+            log.warn("Deposit failed: negative amount{} for accountId={}", amount, id);
             return new ResponseEntity<>("Amount can't be negative", HttpStatus.BAD_REQUEST);
         }
         else {
@@ -61,14 +67,19 @@ public class AccountService {
 
             updateAccount(account);
 
+            log.info("Deposit successful: accountId={}, amount={}", account.getId(), amount);
             return new ResponseEntity<>("Account deposited successfully", HttpStatus.OK);
         }
 
     }
 
     public ResponseEntity<String> withdrawById(int id, double amount){
+        log.info("Withdraw request: accountId={}, amount={}", id, amount);
         Account account = getAccountById(id);
-        if(amount<=0) return new ResponseEntity<>("Amount can't be negative", HttpStatus.BAD_REQUEST);
+        if(amount<=0){
+            log.warn("Withdraw failed: negative amount{} for accountId={}", amount, id);
+            return new ResponseEntity<>("Amount can't be negative", HttpStatus.BAD_REQUEST);
+        }
         else if(account.canWithdraw(amount)){
             account.setBalance(account.getBalance()-amount);
 
@@ -77,8 +88,10 @@ public class AccountService {
             account.addTransaction(accountTransaction);
 
             updateAccount(account);
+            log.info("Withdraw successful: accountId={}, amount={}", account.getId(), amount);
             return new ResponseEntity<>( HttpStatus.OK);
         }else {
+            log.warn("Withdraw failed: enough money amount{} for accountId={}", amount, id);
             return new ResponseEntity<>("You don't have enough money",HttpStatus.BAD_REQUEST);
         }
     }
@@ -92,7 +105,11 @@ public class AccountService {
                                                       int toAccountId,
                                                       double amount,
                                                       String description){
-        if(amount <= 0) return new ResponseEntity<>("Amount can't be negative", HttpStatus.BAD_REQUEST);
+        log.info("Transaction request: fromAccountId{} for toAccountId{}, amount{}, description={}", fromAccountId, toAccountId, amount, description);
+        if(amount <= 0){
+            log.warn("Transaction failed: negative amount{} for accountId={}", amount, fromAccountId);
+            return new ResponseEntity<>("Amount can't be negative", HttpStatus.BAD_REQUEST);
+        }
         Account fromAccount = getAccountById(fromAccountId);
         Account toAccount = getAccountById(toAccountId);
 
@@ -100,9 +117,8 @@ public class AccountService {
         double amountTo = 0;
         try {
             amountTo = currencyService.convert(amount,fromAccount.getCurrency(), toAccount.getCurrency());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
+            log.error(e.getMessage());
             throw new RuntimeException(e);
         }
         Transaction toTransaction = new Transaction(TransactionType.RECEIVE, amountTo, description, fromAccount, toAccount, toAccount.getCurrency());
@@ -126,9 +142,11 @@ public class AccountService {
                 updateAccount(toAccount);
                 updateAccount(fromAccount);
 
+                log.info("Transaction successful: fromAccountId{} for toAccountId={}, amount={}", fromAccountId,toAccountId, amount);
                 return new ResponseEntity<>("transaction was correct", HttpStatus.OK);
             }
         else{
+            log.warn("Transaction failed: fromAccountId{} for toAccountId={}, amount={}", fromAccountId, toAccountId, amount);
             return new ResponseEntity<>("something went wrong",HttpStatus.BAD_REQUEST);
         }
     }
