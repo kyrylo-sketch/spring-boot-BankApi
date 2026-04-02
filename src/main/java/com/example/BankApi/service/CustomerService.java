@@ -67,7 +67,7 @@ public class CustomerService {
     }
 
     public void addAccountById(Account account, int id){
-        log.info("Adding account request: accountId{}", id);
+        log.info("Adding account request: accountId={}", id);
         Customer customer = getCustomerById(id);
         account.setCustomer(customer);
         Account saved = accountRepo.save(account);
@@ -77,34 +77,34 @@ public class CustomerService {
     }
 
     public ResponseEntity<String> register(Customer customer){
-        log.info("Register account request: customerId{}", customer.getId());
+        log.info("Register account request: customerId={}", customer.getId());
         Customer find = repository.findByUsername(customer.getUsername());
         if(find != null){
-            log.warn("Register account failed: username{} already exists", customer.getUsername());
+            log.warn("Register account failed: username={} already exists", customer.getUsername());
             return new ResponseEntity<>("Customer with this username already exists", HttpStatus.BAD_REQUEST);
         }else {
             customer.setPassword(encoder.encode(customer.getPassword()));
             customer.setRole("USER");
             repository.save(customer);
-            log.info("Register account success: customerId{}", customer.getId());
+            log.info("Register account success: customerId={}", customer.getId());
             return new ResponseEntity<>(jwtService.generateToken(customer.getUsername()), HttpStatus.OK) ;
         }
 
     }
 
     public Result verify(Customer customer){
-        log.info("Verify account request: customerId{}", customer.getId());
+        log.info("Verify account request: customerId={}", customer.getId());
         Authentication authentication =
                 authManager.authenticate(new UsernamePasswordAuthenticationToken(customer.getUsername(), customer.getPassword()));
 
         if(authentication.isAuthenticated()){
             Customer fullCustomer = repository.findByUsername(customer.getUsername());
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(fullCustomer);
-            log.info("Authentication successful: username{}", customer.getUsername());
+            log.info("Authentication successful: username={}", customer.getUsername());
             return new Result(jwtService.generateToken(customer.getUsername()),refreshToken.getToken(), fullCustomer);
 
         }
-        log.warn("Authentication failed: username{}", customer.getUsername());
+        log.warn("Authentication failed: username={}", customer.getUsername());
         return new Result("fail", "fail",null);
     }
 

@@ -23,9 +23,9 @@ public class CurrencyService {
     public CurrencyService(){}
 
     public double convert(double amount, Currency from, Currency to) throws IOException, InterruptedException {
-        log.info("Converting request from{} to{}, amount{}", from, to, amount);
+        log.info("Converting request from{} to{}, amount={}", from, to, amount);
         if (amount <=0){
-            log.warn("Converting failed: negative amount{}", amount);
+            log.warn("Converting failed: negative amount={}", amount);
             throw new IllegalArgumentException("Amount must be greater than zero");
         }
         if(from == to){
@@ -51,7 +51,7 @@ public class CurrencyService {
         }else {
             rateTo = node.get("rates").get(to.name()).asDouble();
         }
-        log.info("Converting successful: from {}, to {}, amount{}", from, to, amount);
+        log.info("Converting successful: from={}, to={}, amount={}", from, to, amount);
         return amount * (rateTo / rateFrom);
     }
 

@@ -20,7 +20,7 @@ public class RefreshTokenService {
     private RefreshTokenRepo refreshTokenRepo;
 
     public RefreshToken createRefreshToken(Customer customer){
-        log.info("Creating refresh token request: customerId{}", customer.getId());
+        log.info("Creating refresh token request: customerId={}", customer.getId());
         RefreshToken existing = refreshTokenRepo.findByCustomer(customer);
         if(existing != null){
             refreshTokenRepo.delete(existing);
@@ -31,17 +31,17 @@ public class RefreshTokenService {
         rt.setToken(UUID.randomUUID().toString());
         rt.setExpiryAt(LocalDateTime.now().plusDays(7));
         rt.setCustomer(customer);
-        log.info("Created refresh token successful: customerId{}", customer.getId());
+        log.info("Created refresh token successful: customerId={}", customer.getId());
         return refreshTokenRepo.save(rt);
     }
 
     public boolean isValid(RefreshToken rt) {
-        log.info("Validating refresh token request: customerId{}", rt.getCustomer().getId());
+        log.info("Validating refresh token request: customerId={}", rt.getCustomer().getId());
         return rt.getExpiryAt().isAfter(LocalDateTime.now());
     }
 
     public RefreshToken findByToken(String token){
-        log.info("Finding refresh token request: token{}", token);
+        log.info("Finding refresh token request: token={}", token);
         return refreshTokenRepo.findByToken(token);
     }
 }

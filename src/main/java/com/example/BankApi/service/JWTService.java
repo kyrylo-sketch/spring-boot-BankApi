@@ -37,11 +37,11 @@ public class JWTService {
 //    }
 
     public String generateToken(String username) {
-        log.info("Generating JWT token for user {}", username);
+        log.info("Generating JWT token for user={}", username);
 
         Map<String, Object> claims = new HashMap<>();
 
-        log.info("Generating JWT token successfulfor user {}", username);
+        log.info("Generating JWT token successfulfor user={}", username);
         return Jwts.builder()
                 .claims()
                 .add(claims)
@@ -57,7 +57,7 @@ public class JWTService {
     private SecretKey getKey() {
         log.info("Getting JWT secret key for user {}", secretKey);
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        log.info("Decoding JWT secret key for user {}: successful", secretKey);
+        log.info("Decoding JWT secret key for user={}: successful", secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
