@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Slf4j
 @Service
 public class JWTService {
 
@@ -35,9 +37,11 @@ public class JWTService {
 //    }
 
     public String generateToken(String username) {
+        log.info("Generating JWT token for user={}", username);
 
         Map<String, Object> claims = new HashMap<>();
 
+        log.info("Generating JWT token successfulfor user={}", username);
         return Jwts.builder()
                 .claims()
                 .add(claims)
@@ -51,7 +55,9 @@ public class JWTService {
     }
 
     private SecretKey getKey() {
+        log.info("Getting JWT secret key for user {}", secretKey);
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        log.info("Decoding JWT secret key for user={}: successful", secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
