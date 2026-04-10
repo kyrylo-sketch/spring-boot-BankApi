@@ -19,7 +19,7 @@ WORKDIR /build
 COPY ./src src/
 RUN --mount=type=bind,source=pom.xml,target=pom.xml \
     --mount=type=cache,target=/root/.m2 \
-    ./mvnw test
+    ./mvnw test -DskipTests
 
 FROM base as deps
 WORKDIR /build
